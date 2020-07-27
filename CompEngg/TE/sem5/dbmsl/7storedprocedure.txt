@@ -1,0 +1,170 @@
+/*
+Title:-PL/SQL Stored Procedure and Stored Function.
+Write a Stored Procedure namely proc_Grade for the categorization of student.. If marks scored
+by students in examination is <=1500 and marks>=990 then student will be placed in
+distinction category if marks scored are between 989 and900 category is first class, if marks
+899 and 825 category is Higher Second Class
+Write a PL/SQL block for using procedure created with above requirement.
+Stud_Marks(name, total_marks)
+Result(Roll,Name, Class)
+Frame the separate problem statement for writing PL/SQL Stored Procedure and
+function, inline with above statement. The problem statement should clearly state the
+requirements.
+*/
+
+mysql> create database stud;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> use stud;
+Database changed
+
+//create table stud_marks
+mysql> create table stud_marks(roll_no integer primary key,name varchar(20),total_marks integer);
+Query OK, 0 rows affected (0.07 sec)
+
+//create table result
+mysql> create table result(roll_no integer,class varchar(20),constraint xyz foreign key(roll_no) references stud_marks(roll_no));
+Query OK, 0 rows affected (0.07 sec)
+
+//insert data into stud_marks
+
+mysql> insert into stud_marks value (1,'shubham',930);
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into stud_marks(roll_no,name,total_marks) values(2,'vrushil',1130),(3,'nakshatra',950),(4,'manali',840),(5,'tejas',1000),(6,'aishwarya',860);
+Query OK, 5 rows affected (0.03 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+//display stud_marks
+
+mysql> select * from stud_marks;
++---------+------------+-------------+
+| roll_no |    name    | total_marks |
++---------+------------+-------------+
+|       1 |  shubham   |         930 |
+|       2 |  vrushil   |        1130 |
+|       3 |  nakshatra |         950 |
+|       4 |   manali   |         840 |
+|       5 |   tejas    |        1000 |
+|       6 |  aishwarya |         860 |
++---------+------------+-------------+
+6 rows in set (0.00 sec)
+
+
+//create procedure credit
+
+mysql> delimiter //
+mysql> create procedure credit (IN roll integer)
+    -> begin
+    -> declare m integer;
+    -> declare c varchar(20);
+    -> select total_marks into m from stud_marks where roll_no=roll;
+    -> if m>=990 and m<=1500 then
+    -> set c='Distinction';
+    -> insert into result values(roll,c);
+    -> elseif m>=900 and m<=989 then
+    -> set c='First Class';
+    -> insert into result values(roll,c);
+    -> elseif m>=825 and m<=899 then
+    -> set c='Higher Second Class';
+    -> insert into result values(roll,c);
+    -> end if;
+    -> end //
+Query OK, 0 rows affected (0.00 sec)
+
+/*call procedure */
+
+mysql> call credit(1)//
+Query OK, 1 row affected (0.03 sec)
+
+/*display result */
+
+mysql>  select * from result//
++---------+-------------+
+| roll_no | class       |
++---------+-------------+
+|       1 | First Class |
++---------+-------------+
+1 row in set (0.00 sec)
+
+mysql> call credit(2)//
+Query OK, 1 row affected (0.05 sec)
+
+mysql> call credit(3)//
+Query OK, 1 row affected (0.03 sec)
+
+mysql> call credit(4)//
+Query OK, 1 row affected (0.04 sec)
+
+mysql> call credit(5)//
+Query OK, 1 row affected (0.03 sec)
+
+mysql> call credit(6)//
+Query OK, 1 row affected (0.03 sec)
+
+mysql>  select * from result//
++---------+---------------------+
+| roll_no | class               |
++---------+---------------------+
+|       1 | First Class         |
+|       2 | Distinction         |
+|       3 | First Class         |
+|       4 | Higher Second Class |
+|       5 | Distinction         |
+|       6 | Higher Second Class |
++---------+---------------------+
+6 rows in set (0.00 sec)
+
+//create function disp_grade2
+
+mysql> create function disp_grade2(roll1 integer) RETURNS varchar(20) begin declare m1 integer; declare c1 varchar(20); select total_marks into m1 from stud_marks where roll1=roll_no; if m1>=990 and m1<=1500 then set c1='Distinction'; elseif m1>=900 and m1<=989 then set c1='First Class'; elseif m1>=825 and m1<=899 then set c1='Higher Second Class'; end if; return c1;end //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select disp_grade2(1)//
++----------------+
+| disp_grade2(1) |
++----------------+
+| First Class    |
++----------------+
+1 row in set (0.00 sec)
+
+mysql> select disp_grade2(2)//
++----------------+
+| disp_grade2(2) |
++----------------+
+| Distinction    |
++----------------+
+1 row in set (0.00 sec)
+
+mysql> select disp_grade2(3)//
++----------------+
+| disp_grade2(3) |
++----------------+
+| First Class    |
++----------------+
+1 row in set (0.00 sec)
+
+mysql> select disp_grade2(4)//
++---------------------+
+| disp_grade2(4)      |
++---------------------+
+| Higher Second Class |
++---------------------+
+1 row in set (0.00 sec)
+
+mysql> select disp_grade2(5)//
++----------------+
+| disp_grade2(5) |
++----------------+
+| Distinction    |
++----------------+
+1 row in set (0.00 sec)
+
+mysql> select disp_grade2(6)//
++---------------------+
+| disp_grade2(6)      |
++---------------------+
+| Higher Second Class |
++---------------------+
+1 row in set (0.00 sec)
+

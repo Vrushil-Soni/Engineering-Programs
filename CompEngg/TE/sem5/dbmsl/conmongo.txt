@@ -1,0 +1,37 @@
+
+import com.mongodb.*; 
+public class conmongo
+ { 
+	public static void main(String[] args) 
+	{ 
+		try
+		 { 
+		MongoClient mongoClient = new MongoClient( "localhost" , 27017 ); 
+		DB db = mongoClient.getDB( "mydb" ); 
+		DBCollection coll = db.createCollection(“Stud",null); 
+		BasicDBObject doc1 = new BasicDBObject("rno","1").append("name",“ABC"); 
+		BasicDBObject doc2 = new BasicDBObject("rno","2").append("name","PQR"); 
+		coll.insert(doc1); 
+		coll.insert(doc2); 
+		DBCursor cursor = coll.find(searchQuery); 
+		while (cursor.hasNext()) 
+		{ 
+		System.out.println(cursor.next()); 
+		} 
+		BasicDBObject query = new BasicDBObject(); 
+		query.put("name", “LMN"); 
+		BasicDBObject N1 = new BasicDBObject(); 
+		N1.put("name", “XYZ"); 
+		BasicDBObject S1= new BasicDBObject(); 
+		S1.put("$set", newDocument); 
+		coll.update(query, S1); 
+		BasicDBObject R1 = new BasicDBObject(); 
+		R1.put("name", “LMN"); 
+		coll.remove(R1); 
+		} 
+		catch(Exception e) 
+		{ 
+		e.printStackTrace(); 
+		} 
+	} 
+} 

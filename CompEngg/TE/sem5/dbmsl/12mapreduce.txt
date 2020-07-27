@@ -1,0 +1,209 @@
+/*
+Title:--Implement Map reduces operation with suitable example using MongoDB.
+*/
+
+> show databases;
+admin  (empty)
+local  0.078GB
+test   0.078GB
+> use DBMS
+switched to db DBMS
+//create collection
+
+> db.createCollection("test")
+{ "ok" : 1 }
+
+//insert documents.
+
+> db.test.insert({name:"Vrushil",roll:1,class:"TE"})
+WriteResult({ "nInserted" : 1 })
+
+//Display document.
+
+> db.test.find().pretty()
+{
+	"_id" : ObjectId("561265687d597a0aecab9241"),
+	"name" : "Vrushil",
+	"roll" : 1,
+	"class" : "TE"
+}
+> db.test.insert([{name:"Nakshatra",roll:2,class:"TE"},{name:"Tejas",roll:3,class:"TE"},{name:"Manali",roll:4,class:"TE"},{name:"Shubham",roll:5,class:"SE"},{name:"Gauri",roll:6,class:"BE"},{name:"Aishwarya",roll:7,class:"SE"},{name:"Pooja",roll:8,class:"BE"}])
+BulkWriteResult({
+	"writeErrors" : [ ],
+	"writeConcernErrors" : [ ],
+	"nInserted" : 7,
+	"nUpserted" : 0,
+	"nMatched" : 0,
+	"nModified" : 0,
+	"nRemoved" : 0,
+	"upserted" : [ ]
+})
+
+//use map reduce function
+
+> db.test.find().pretty()
+{
+	"_id" : ObjectId("59dc794229f7f2f715652604"),
+	"name" : "Vrushil",
+	"roll" : 1,
+	"class" : "TE"
+}
+{
+	"_id" : ObjectId("59dc795b29f7f2f715652605"),
+	"name" : "Nakshatra",
+	"roll" : 2,
+	"class" : "TE"
+}
+{
+	"_id" : ObjectId("59dc795b29f7f2f715652606"),
+	"name" : "Tejas",
+	"roll" : 3,
+	"class" : "TE"
+}
+{
+	"_id" : ObjectId("59dc795b29f7f2f715652607"),
+	"name" : "Manali",
+	"roll" : 4,
+	"class" : "TE"
+}
+{
+	"_id" : ObjectId("59dc795b29f7f2f715652608"),
+	"name" : "Shubham",
+	"roll" : 5,
+	"class" : "SE"
+}
+{
+	"_id" : ObjectId("59dc795b29f7f2f715652609"),
+	"name" : "Gauri",
+	"roll" : 6,
+	"class" : "BE"
+}
+{
+	"_id" : ObjectId("59dc795b29f7f2f71565260a"),
+	"name" : "Aishwarya",
+	"roll" : 7,
+	"class" : "SE"
+}
+{
+	"_id" : ObjectId("59dc795b29f7f2f71565260b"),
+	"name" : "Pooja",
+	"roll" : 8,
+	"class" : "BE"
+}
+>  var Mapfunction = function(){emit(this.class,this.roll)}
+>  var Reducefunction = function(key,values){return Array.sum(values)}
+>  db.test.mapReduce(Mapfunction,Reducefunction,{'out':'resultant'})
+{
+	"result" : "resultant",
+	"timeMillis" : 551,
+	"counts" : {
+		"input" : 8,
+		"emit" : 8,
+		"reduce" : 3,
+		"output" : 3
+	},
+	"ok" : 1
+}
+> db.resulatant.find()
+> db.resultant.find()
+{ "_id" : "BE", "value" : 14 }
+{ "_id" : "SE", "value" : 12 }
+{ "_id" : "TE", "value" : 10 }
+
+> db.test.insert({name:"Vrushila",roll:10,class:"rE"})
+> var Mapfunction = function(){emit(this.class,this.roll)}
+> var Reducefunction = function(key,values){return Array.sum(values)}
+> db.test.mapReduce(Mapfunction,Reducefunction,{'out':'resultant'})
+{
+	"result" : "resultant",
+	"timeMillis" : 370,
+	"counts" : {
+		"input" : 9,
+		"emit" : 9,
+		"reduce" : 3,
+		"output" : 4
+	},
+	"ok" : 1
+}
+> db.resultant.find()
+{ "_id" : "BE", "value" : 14 }
+{ "_id" : "SE", "value" : 12 }
+{ "_id" : "TE", "value" : 10 }
+{ "_id" : "rE", "value" : 10 }
+
+> db.test.insert({name:"Vrushila",roll:1,class:"rE"})
+WriteResult({ "nInserted" : 1 })
+> var Mapfunction = function(){emit(this.class,this.roll)}
+> var Reducefunction = function(key,values){return Array.sum(values)}
+> db.test.mapReduce(Mapfunction,Reducefunction,{'out':'resultant'})
+{
+	"result" : "resultant",
+	"timeMillis" : 335,
+	"counts" : {
+		"input" : 10,
+		"emit" : 10,
+		"reduce" : 4,
+		"output" : 4
+	},
+	"ok" : 1
+}
+> db.resultant.find()
+{ "_id" : "BE", "value" : 14 }
+{ "_id" : "SE", "value" : 12 }
+{ "_id" : "TE", "value" : 10 }
+{ "_id" : "rE", "value" : 11 }
+
+> var Mapfunction = function(){emit(this.roll,2)}
+> var Reducefunction = function(key,values){return Array.sum(values)}
+> db.test.mapReduce(Mapfunction,Reducefunction,{'out':'resultant'})
+{
+	"result" : "resultant",
+	"timeMillis" : 407,
+	"counts" : {
+		"input" : 10,
+		"emit" : 10,
+		"reduce" : 1,
+		"output" : 9
+	},
+	"ok" : 1
+}
+> db.resultant.find()
+{ "_id" : 1, "value" : 4 }
+{ "_id" : 2, "value" : 2 }
+{ "_id" : 3, "value" : 2 }
+{ "_id" : 4, "value" : 2 }
+{ "_id" : 5, "value" : 2 }
+{ "_id" : 6, "value" : 2 }
+{ "_id" : 7, "value" : 2 }
+{ "_id" : 8, "value" : 2 }
+{ "_id" : 10, "value" : 2 }
+> db.test.insert({name:"Vrushila",roll:2,class:"SE"})
+WriteResult({ "nInserted" : 1 })
+> var Mapfunction = function(){emit(this.roll,2)}
+> var Reducefunction = function(key,values){return Array.sum(values)}
+> db.test.mapReduce(Mapfunction,Reducefunction,{'out':'resultant'})
+{
+	"result" : "resultant",
+	"timeMillis" : 412,
+	"counts" : {
+		"input" : 11,
+		"emit" : 11,
+		"reduce" : 2,
+		"output" : 9
+	},
+	"ok" : 1
+}
+> db.resultant.find()
+{ "_id" : 1, "value" : 4 }
+{ "_id" : 2, "value" : 4 }
+{ "_id" : 3, "value" : 2 }
+{ "_id" : 4, "value" : 2 }
+{ "_id" : 5, "value" : 2 }
+{ "_id" : 6, "value" : 2 }
+{ "_id" : 7, "value" : 2 }
+{ "_id" : 8, "value" : 2 }
+{ "_id" : 10, "value" : 2 }
+> 
+
+
+

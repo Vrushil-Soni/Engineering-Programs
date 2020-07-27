@@ -1,0 +1,49 @@
+library(e1071)
+> library(rpart)
+> library(caTools)
+> mydate<-read.csv(file="/root/capitalbikeshare-tripdata.csv", header=TRUE,sep=",")
+> View(mydata)
+> subset_mydata<-mydata[,c(1,4,6,9)]
+> temp_filed<-sample.split(subset_mydata,SplitRatio=0.9)
+> train<-subset(subset_mydata,temp_field=TRUE)
+> test<-subset(subset_mydata,temp_field=FALSE)
+> head(train)
+  Duration Start.station.number End.station.number Member.type
+1      221                31634              31208      Member
+2     1676                31258              31270      Casual
+3     1356                31289              31222      Casual
+4     1327                31289              31222      Casual
+5     1636                31258              31270      Casual
+6     1603                31258              31270      Casual
+> head(test)
+  Duration Start.station.number End.station.number Member.type
+1      221                31634              31208      Member
+2     1676                31258              31270      Casual
+3     1356                31289              31222      Casual
+4     1327                31289              31222      Casual
+5     1636                31258              31270      Casual
+6     1603                31258              31270      Casual
+> summary(train)
+    Duration     Start.station.number End.station.number Member.type    
+ Min.   :   60   Min.   :31000        Min.   :31000      Casual:118076  
+ 1st Qu.:  373   1st Qu.:31202        1st Qu.:31207      Member:528434  
+ Median :  626   Median :31251        Median :31250                     
+ Mean   : 1010   Mean   :31317        Mean   :31320                     
+ 3rd Qu.: 1064   3rd Qu.:31505        3rd Qu.:31505                     
+ Max.   :86066   Max.   :32223        Max.   :32223                     
+> summary(test)
+    Duration     Start.station.number End.station.number Member.type    
+ Min.   :   60   Min.   :31000        Min.   :31000      Casual:118076  
+ 1st Qu.:  373   1st Qu.:31202        1st Qu.:31207      Member:528434  
+ Median :  626   Median :31251        Median :31250                     
+ Mean   : 1010   Mean   :31317        Mean   :31320                     
+ 3rd Qu.: 1064   3rd Qu.:31505        3rd Qu.:31505                     
+ Max.   :86066   Max.   :32223        Max.   :32223                     
+> fit<-rpart(train$Member.type~.,data=train, method="class")
+> plot(fit)
+> text(fit)
+> pred<-predict(fit,newdata=test[-4],type=("class"))
+> mean(pred==test$Member.type)
+[1] 0.8758457
+> output<-cbind(test,pred)
+> View(Output)

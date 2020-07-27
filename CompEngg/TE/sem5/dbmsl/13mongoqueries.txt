@@ -1,0 +1,275 @@
+/*
+Title:-- Design and Implement any 5 query using MongoDB
+Consider the collection of "users" which contain documents as
+    users({user_id,age,status})
+1) Create collection and documents.
+2) Insert data and update documents.
+3) find all users whose age is equal to 50 or status is "A".
+4) Update the user's age increment by3 whose status is "A" .
+5) Delete the user whose status is "A" .
+
+*/
+
+
+root@newcompdbms11:~# mongo
+MongoDB shell version: 3.2.16
+connecting to: test
+Server has startup warnings: 
+2017-10-02T08:14:43.674+0530 I CONTROL  [initandlisten] 
+2017-10-02T08:14:43.674+0530 I CONTROL  [initandlisten] ** WARNING: /sys/kernel/mm/transparent_hugepage/enabled is 'always'.
+2017-10-02T08:14:43.675+0530 I CONTROL  [initandlisten] **        We suggest setting it to 'never'
+2017-10-02T08:14:43.675+0530 I CONTROL  [initandlisten] 
+2017-10-02T08:14:43.675+0530 I CONTROL  [initandlisten] ** WARNING: /sys/kernel/mm/transparent_hugepage/defrag is 'always'.
+2017-10-02T08:14:43.675+0530 I CONTROL  [initandlisten] **        We suggest setting it to 'never'
+2017-10-02T08:14:43.675+0530 I CONTROL  [initandlisten] 
+> use as4
+switched to db as4
+> show dbs
+KR        0.000GB
+Pooja     0.000GB
+ash       0.000GB
+emp       0.000GB
+employee  0.000GB
+local     0.000GB
+mydb      0.000GB
+query     0.000GB
+student   0.000GB
+
+/*  Create collection and documents */
+> db.createCollection("users")
+{ "ok" : 1 }
+
+/*Insert data */
+
+> db.users.insert({user_id:101,age:50,status:"A"})
+WriteResult({ "nInserted" : 1 })
+> db.users.insert({user_id:102,age:45,status:"B"})
+WriteResult({ "nInserted" : 1 })
+> db.users.insert({user_id:103,age:50,status:"A"})
+WriteResult({ "nInserted" : 1 })
+> db.users.insert({user_id:104,age:50,status:"B"})
+WriteResult({ "nInserted" : 1 })
+> db.users.insert({user_id:105,age:52,status:"A"})
+WriteResult({ "nInserted" : 1 })
+> db.users.insert({user_id:106,age:35,status:"A"})
+WriteResult({ "nInserted" : 1 })
+> db.users.find().pretty()
+{
+	"_id" : ObjectId("59d1b53094e3373d0cb05284"),
+	"user_id" : 101,
+	"age" : 50,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("59d1b54494e3373d0cb05285"),
+	"user_id" : 102,
+	"age" : 45,
+	"status" : "B"
+}
+{
+	"_id" : ObjectId("59d1b56194e3373d0cb05286"),
+	"user_id" : 103,
+	"age" : 50,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("59d1b56e94e3373d0cb05287"),
+	"user_id" : 104,
+	"age" : 50,
+	"status" : "B"
+}
+{
+	"_id" : ObjectId("59d1b58494e3373d0cb05288"),
+	"user_id" : 105,
+	"age" : 52,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("59d1b59794e3373d0cb05289"),
+	"user_id" : 106,
+	"age" : 35,
+	"status" : "A"
+}
+
+/* update documents.*/
+> db.users.update({user_id:105},{$set:{status:"B"}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.users.find().pretty()
+{
+	"_id" : ObjectId("59d1b53094e3373d0cb05284"),
+	"user_id" : 101,
+	"age" : 50,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("59d1b54494e3373d0cb05285"),
+	"user_id" : 102,
+	"age" : 45,
+	"status" : "B"
+}
+{
+	"_id" : ObjectId("59d1b56194e3373d0cb05286"),
+	"user_id" : 103,
+	"age" : 50,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("59d1b56e94e3373d0cb05287"),
+	"user_id" : 104,
+	"age" : 50,
+	"status" : "B"
+}
+{
+	"_id" : ObjectId("59d1b58494e3373d0cb05288"),
+	"user_id" : 105,
+	"age" : 52,
+	"status" : "B"
+}
+{
+	"_id" : ObjectId("59d1b59794e3373d0cb05289"),
+	"user_id" : 106,
+	"age" : 35,
+	"status" : "A"
+}
+
+/* find all users whose age is equal to 50 or status is "A"*/
+> db.users.find({$or:[{age:50},{status:"A"}]}).pretty()
+{
+	"_id" : ObjectId("59d1b53094e3373d0cb05284"),
+	"user_id" : 101,
+	"age" : 50,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("59d1b56194e3373d0cb05286"),
+	"user_id" : 103,
+	"age" : 50,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("59d1b56e94e3373d0cb05287"),
+	"user_id" : 104,
+	"age" : 50,
+	"status" : "B"
+}
+{
+	"_id" : ObjectId("59d1b59794e3373d0cb05289"),
+	"user_id" : 106,
+	"age" : 35,
+	"status" : "A"
+}
+> db.users.update({status:"A"},{$set:{$add:["age",3]}})
+WriteResult({
+	"nMatched" : 0,
+	"nUpserted" : 0,
+	"nModified" : 0,
+	"writeError" : {
+		"code" : 52,
+		"errmsg" : "The dollar ($) prefixed field '$add' in '$add' is not valid for storage."
+	}
+})
+
+/* Update the user's age increment by3 whose status is "A"*/
+> db.users.update({status:"A"},{$inc:{age:3}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.users.find().pretty()
+{
+	"_id" : ObjectId("59d1b53094e3373d0cb05284"),
+	"user_id" : 101,
+	"age" : 53,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("59d1b54494e3373d0cb05285"),
+	"user_id" : 102,
+	"age" : 45,
+	"status" : "B"
+}
+{
+	"_id" : ObjectId("59d1b56194e3373d0cb05286"),
+	"user_id" : 103,
+	"age" : 50,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("59d1b56e94e3373d0cb05287"),
+	"user_id" : 104,
+	"age" : 50,
+	"status" : "B"
+}
+{
+	"_id" : ObjectId("59d1b58494e3373d0cb05288"),
+	"user_id" : 105,
+	"age" : 52,
+	"status" : "B"
+}
+{
+	"_id" : ObjectId("59d1b59794e3373d0cb05289"),
+	"user_id" : 106,
+	"age" : 35,
+	"status" : "A"
+}
+> db.users.update({status:"A"},{$inc:{age:3}},{multi:true})
+WriteResult({ "nMatched" : 3, "nUpserted" : 0, "nModified" : 3 })
+> db.users.find().pretty()
+{
+	"_id" : ObjectId("59d1b53094e3373d0cb05284"),
+	"user_id" : 101,
+	"age" : 56,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("59d1b54494e3373d0cb05285"),
+	"user_id" : 102,
+	"age" : 45,
+	"status" : "B"
+}
+{
+	"_id" : ObjectId("59d1b56194e3373d0cb05286"),
+	"user_id" : 103,
+	"age" : 53,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("59d1b56e94e3373d0cb05287"),
+	"user_id" : 104,
+	"age" : 50,
+	"status" : "B"
+}
+{
+	"_id" : ObjectId("59d1b58494e3373d0cb05288"),
+	"user_id" : 105,
+	"age" : 52,
+	"status" : "B"
+}
+{
+	"_id" : ObjectId("59d1b59794e3373d0cb05289"),
+	"user_id" : 106,
+	"age" : 38,
+	"status" : "A"
+}
+
+/* Delete the user whose status is "A"*/
+> db.users.remove({status:"A"})
+WriteResult({ "nRemoved" : 3 })
+> db.users.find().pretty()
+{
+	"_id" : ObjectId("59d1b54494e3373d0cb05285"),
+	"user_id" : 102,
+	"age" : 45,
+	"status" : "B"
+}
+{
+	"_id" : ObjectId("59d1b56e94e3373d0cb05287"),
+	"user_id" : 104,
+	"age" : 50,
+	"status" : "B"
+}
+{
+	"_id" : ObjectId("59d1b58494e3373d0cb05288"),
+	"user_id" : 105,
+	"age" : 52,
+	"status" : "B"
+}
+> 
+

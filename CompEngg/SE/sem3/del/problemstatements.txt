@@ -1,0 +1,22 @@
+Deld 1 includes assignments: 1,2,3,4,5,6,7,9A,10,11
+Deld 2 includes assignments: 8,9B,12,13,14,15
+Mongo Connectivity in C1,C2
+
+Problem Statements for deld are as follows:
+
+1:Realize half and full adder and subtractor using a)basic gates and b)universsal gates.
+2:Design and implement code converter binary to gray and bcd to excess 3
+3:Design of n-bit carry slave adder and propagation adder. Design and realization of bcd adder using 4 bit binary adder.
+4:To realize boolean expression for suitable combination logic using 74151 mux.
+5:verify the truth table of 1 bit and 2 bit comparators using logic gateas & comparator IC.
+6:Design and implement parity generator using ex-or gates.
+7:flip flop coversion. Design and realization.
+8:Design of ripple counter using suitable flip flop.
+9A:Realization of 3 bit up/down counter using Master slave JK flip flop.
+9B:Realizations and mod-n counter(7490 & 74193).
+10:Design and realization of ring counter and johnsons ring counter.
+11:Design and implement sequence generator using JK flip flop.
+12:Full adder, mux 
+13:Design and simulate asynchronnous 3-bit counter using VHDL.
+14:Study of shift registers SISo,PISO,SIPO and PIPO.
+15:Study of TTL logic family: Feature,Characteristics, and comparison with CMOS Family.

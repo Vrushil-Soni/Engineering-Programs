@@ -1,0 +1,208 @@
+
+/*
+Title:--Implement aggregation and indexing with suitable example using MongoDB.
+*/
+
+> show dbs
+admin  (empty)
+local  0.078GB
+mydb   0.078GB
+
+//create collection order
+
+> db.createCollection("orders")
+{ "ok" : 1 }
+
+//insert document
+
+> db.orders.insert({"C_id":101,"item":"bags","amt":1000,"quantity":10,"status":"P"})
+WriteResult({ "nInserted" : 1 })
+> db.orders.insert({"C_id":102,"item":"mobile","amt":30000,"quantity":1,"status":"P"})
+WriteResult({ "nInserted" : 1 })
+
+//disply document
+
+> db.orders.find().pretty()
+{
+	"_id" : ObjectId("59daaa63d9f600cbebec7f3a"),
+	"C_id" : 101,
+	"item" : "bags",
+	"amt" : 1000,
+	"quantity" : 10,
+	"status" : "P"
+}
+{
+	"_id" : ObjectId("59daaa83d9f600cbebec7f3b"),
+	"C_id" : 102,
+	"item" : "mobile",
+	"amt" : 30000,
+	"quantity" : 1,
+	"status" : "P"
+}
+
+//insert document
+
+> db.orders.insert({"C_id":111,"item":"pencil","amt":300,"quantity":4,"status":"P"})
+WriteResult({ "nInserted" : 1 })
+> db.orders.insert({"C_id":811,"item":"pen","amt":450,"quantity":5,"status":"N"})
+WriteResult({ "nInserted" : 1 })
+
+> db.orders.find().pretty()
+{
+	"_id" : ObjectId("59daaa63d9f600cbebec7f3a"),
+	"C_id" : 101,
+	"item" : "bags",
+	"amt" : 1000,
+	"quantity" : 10,
+	"status" : "P"
+}
+{
+	"_id" : ObjectId("59daaa83d9f600cbebec7f3b"),
+	"C_id" : 102,
+	"item" : "mobile",
+	"amt" : 30000,
+	"quantity" : 1,
+	"status" : "P"
+}
+{
+	"_id" : ObjectId("59daaac0d9f600cbebec7f3c"),
+	"C_id" : 111,
+	"item" : "pencil",
+	"amt" : 300,
+	"quantity" : 4,
+	"status" : "P"
+}
+{
+	"_id" : ObjectId("59daaaead9f600cbebec7f3d"),
+	"C_id" : 811,
+	"item" : "pen",
+	"amt" : 450,
+	"quantity" : 5,
+	"status" : "N"
+}
+> db.orders.distinct("C_id")
+[ 101, 102, 111, 811 ]
+> db.orders.count()
+4
+
+//DISPLAY MIN AMOUNT
+
+> db.orders.aggregate([{"$match":{"status":"N"}},{"$group":{"_id":"$C_id",Total: {"$min":"$amt"}}}])
+{ "_id" : 811, "Total" : 450 }
+> db.orders.aggregate([{"$group":{"_id":"$C_id",Total: {"$min":"$amt"}}}])
+{ "_id" : 811, "Total" : 450 }
+{ "_id" : 111, "Total" : 300 }
+{ "_id" : 102, "Total" : 30000 }
+{ "_id" : 101, "Total" : 1000 }
+
+//DISPLAY AVG
+
+> db.orders.aggregate([{"$group":{"_id":"$C_id",Total: {"$avg":"$amt"}}}])
+{ "_id" : 811, "Total" : 450 }
+{ "_id" : 111, "Total" : 300 }
+{ "_id" : 102, "Total" : 30000 }
+{ "_id" : 101, "Total" : 1000 }
+
+//DISPLAY SUM
+
+> db.orders.aggregate([{"$group":{"_id":"$C_id",Total: {"$sum":"$amt"}}}])
+{ "_id" : 811, "Total" : 450 }
+{ "_id" : 111, "Total" : 300 }
+{ "_id" : 102, "Total" : 30000 }
+{ "_id" : 101, "Total" : 1000 }
+
+//CALCULATE SUM
+> db.orders.aggregate([{"$group":{"_id":"$by_user",Total: {"$sum":"$amt"}}}])
+{ "_id" : null, "Total" : 31750 }
+
+//DISPLAY ALL CUSTUMER ID IN DESCREASING ORDER OF TOTAL ORDER AMOUNT WHOSE ORDER ARE PENDING.
+
+> db.orders.aggregate([{"$match":{"status":"P"}},{"$group":{"_id":"$C_id",Total: {"$sum":"$amt"}}},{$sort:{Total:-1}}])
+{ "_id" : 102, "Total" : 30000 }
+{ "_id" : 101, "Total" : 1000 }
+{ "_id" : 811, "Total" : 450 }
+{ "_id" : 111, "Total" : 300 }
+
+> db.orders.find().pretty()
+{
+	"_id" : ObjectId("59daaa63d9f600cbebec7f3a"),
+	"C_id" : 101,
+	"item" : "bags",
+	"amt" : 1000,
+	"quantity" : 10,
+	"status" : "P"
+}
+{
+	"_id" : ObjectId("59daaa83d9f600cbebec7f3b"),
+	"C_id" : 102,
+	"item" : "mobile",
+	"amt" : 30000,
+	"quantity" : 1,
+	"status" : "P"
+}
+{
+	"_id" : ObjectId("59daaac0d9f600cbebec7f3c"),
+	"C_id" : 111,
+	"item" : "pencil",
+	"amt" : 300,
+	"quantity" : 4,
+	"status" : "P"
+}
+{
+	"_id" : ObjectId("59daaaead9f600cbebec7f3d"),
+	"C_id" : 811,
+	"item" : "pen",
+	"amt" : 450,
+	"quantity" : 5,
+	"status" : "N"
+}
+{
+	"_id" : ObjectId("59daae2dd9f600cbebec7f3e"),
+	"C_id" : 811,
+	"item" : "colorbox",
+	"amt" : 450,
+	"quantity" : 1,
+	"status" : "P"
+}
+
+//AGGREGATE METHODS
+
+> db.orders.aggregate([{"$group":{"_id":"$C_id",url:{$addToSet:"$item"}}}])
+{ "_id" : 811, "url" : [ "colorbox", "pen" ] }
+{ "_id" : 111, "url" : [ "pencil" ] }
+{ "_id" : 102, "url" : [ "mobile" ] }
+{ "_id" : 101, "url" : [ "bags" ] }
+> db.orders.aggregate([{"$group":{"_id":"$C_id",url:{$first:"$item"}}}])
+{ "_id" : 811, "url" : "pen" }
+{ "_id" : 111, "url" : "pencil" }
+{ "_id" : 102, "url" : "mobile" }
+{ "_id" : 101, "url" : "bags" }
+> db.orders.aggregate([{"$group":{"_id":"$C_id",url:{$last:"$item"}}}])
+{ "_id" : 811, "url" : "colorbox" }
+{ "_id" : 111, "url" : "pencil" }
+{ "_id" : 102, "url" : "mobile" }
+{ "_id" : 101, "url" : "bags" }
+> db.orders.aggregate([{"$group":{"_id":"$C_id",url:{$push:"$item"}}}])
+{ "_id" : 811, "url" : [ "pen", "colorbox" ] }
+{ "_id" : 111, "url" : [ "pencil" ] }
+{ "_id" : 102, "url" : [ "mobile" ] }
+{ "_id" : 101, "url" : [ "bags" ] }
+
+//create index
+
+> db.orders.ensureIndex({item:1})
+{
+	"createdCollectionAutomatically" : false,
+	"numIndexesBefore" : 1,
+	"numIndexesAfter" : 2,
+	"ok" : 1
+}
+> db.orders.ensureIndex({C_id:1})
+{
+	"createdCollectionAutomatically" : false,
+	"numIndexesBefore" : 2,
+	"numIndexesAfter" : 3,
+	"ok" : 1
+}
+> 
+

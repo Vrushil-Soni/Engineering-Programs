@@ -1,0 +1,577 @@
+/*
+Title:-Design at least 10 SQL queries for suitable database application using SQL DML statements:
+all types of Join, Sub-Query and View.
+*/
+
+//create database bank
+
+mysql> create database bank;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> use bank;
+Database changed
+
+//create table customer
+
+mysql> create table customer(cust_name varchar(20) primary key, cust_street varchar(20), cust_city varchar(20));
+Query OK, 0 rows affected (0.34 sec)
+
+mysql> describe customer;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| cust_name   | varchar(20) | NO   | PRI | NULL    |       |
+| cust_street | varchar(20) | YES  |     | NULL    |       |
+| cust_city   | varchar(20) | YES  |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+
+//create table account
+
+mysql> create table account(account_no varchar(10) primary key,branch_name varchar(20),balance integer);
+Query OK, 0 rows affected (0.66 sec)
+
+mysql> describe account;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| account_no  | varchar(10) | NO   | PRI | NULL    |       |
+| branch_name | varchar(20) | YES  |     | NULL    |       |
+| balance     | int(11)     | YES  |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+//create table depositer
+
+mysql> create table depositer(cust_name varchar(20),account_no varchar(10),constraint xyz foreign key(cust_name) references customer(cust_name),constraint pqr foreign key(account_no) references account(account_no));
+Query OK, 0 rows affected (2.52 sec)
+
+mysql> describe depositer;
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| cust_name  | varchar(20) | YES  | MUL | NULL    |       |
+| account_no | varchar(10) | YES  | MUL | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+2 rows in set (0.01 sec)
+
+//create table branch
+
+mysql> create table branch(branch_name varchar(20) primary key, branch_city varchar(20),assert integer);
+Query OK, 0 rows affected (0.36 sec)
+
+mysql> describe branch;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| branch_name | varchar(20) | NO   | PRI | NULL    |       |
+| branch_city | varchar(20) | YES  |     | NULL    |       |
+| assert      | int(11)     | YES  |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+//create table loan
+
+mysql> create table loan(loan_no varchar(10) primary key,branch_name varchar(20), amount integer,constraint uvw foreign key(branch_name) references branch(branch_name));
+Query OK, 0 rows affected (0.65 sec)
+
+mysql> describe loan;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| loan_no     | varchar(10) | NO   | PRI | NULL    |       |
+| branch_name | varchar(20) | YES  | MUL | NULL    |       |
+| amount      | int(11)     | YES  |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+//create table borrower
+
+mysql> create table borrower(cust_name varchar(20),loan_no varchar(10),constraint ijk foreign key(cust_name) references customer(cust_name),constraint pq foreign key(loan_no) references loan(loan_no));
+Query OK, 0 rows affected (0.90 sec)
+
+mysql> describe loan;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| loan_no     | varchar(10) | NO   | PRI | NULL    |       |
+| branch_name | varchar(20) | YES  | MUL | NULL    |       |
+| amount      | int(11)     | YES  |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+
+mysql> describe borrower;
++-----------+-------------+------+-----+---------+-------+
+| Field     | Type        | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| cust_name | varchar(20) | YES  | MUL | NULL    |       |
+| loan_no   | varchar(10) | YES  | MUL | NULL    |       |
++-----------+-------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+mysql> alter table account add constraint yz foreign key(branch_name) references branch(branch_name);
+Query OK, 0 rows affected (1.22 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> describe account;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| account_no  | varchar(10) | NO   | PRI | NULL    |       |
+| branch_name | varchar(20) | YES  | MUL | NULL    |       |
+| balance     | int(11)     | YES  |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+
+//insert data into customer
+
+mysql> insert into customer values('admas','spring','pittsfield');
+Query OK, 1 row affected (0.32 sec)
+
+mysql> insert into customer(cust_name,cust_street,cust_city) values('brooks','senator','brooklyn'),('curry','north','rye'),('glenn','sandhill','woodside'),('green','walnut','stamford'),('hayes','main','harrison'),('johnson','amla','palo_alto'),('jones','main','harrison'),('lindsay','park','pittsfield'),('smith','north','rye'),('turner','putnam','stamford'),('williams','nassau','princeton');
+Query OK, 11 rows affected (0.05 sec)
+Records: 11  Duplicates: 0  Warnings: 0
+
+//display customer table
+
+mysql> select * from customer;
++-----------+-------------+------------+
+| cust_name | cust_street | cust_city  |
++-----------+-------------+------------+
+| admas     | spring      | pittsfield |
+| brooks    | senator     | brooklyn   |
+| curry     | north       | rye        |
+| glenn     | sandhill    | woodside   |
+| green     | walnut      | stamford   |
+| hayes     | main        | harrison   |
+| johnson   | amla        | palo_alto  |
+| jones     | main        | harrison   |
+| lindsay   | park        | pittsfield |
+| smith     | north       | rye        |
+| turner    | putnam      | stamford   |
+| williams  | nassau      | princeton  |
++-----------+-------------+------------+
+12 rows in set (0.00 sec)
+
+////insert data into branch
+
+mysql> insert into branch values('brighton','brooklyn',7100000);
+Query OK, 1 row affected (0.33 sec)
+
+mysql> insert into branch (branch_name,branch_city,assert) values('downtown','brooklyn',9000000),('mianus','horseneck',400000),('northtown','rye',3700000),('perrybridge','horseneck',1700000),('pownal','bennington',300000),('redwood','palo_alto',2100000),('roundhill','horseneck',8000000);
+Query OK, 7 rows affected (0.30 sec)
+Records: 7  Duplicates: 0  Warnings: 0
+
+//display branch table
+
+mysql> select * from branch;
++-------------+-------------+---------+
+| branch_name | branch_city | assert  |
++-------------+-------------+---------+
+| brighton    | brooklyn    | 7100000 |
+| downtown    | brooklyn    | 9000000 |
+| mianus      | horseneck   |  400000 |
+| northtown   | rye         | 3700000 |
+| perrybridge | horseneck   | 1700000 |
+| pownal      | bennington  |  300000 |
+| redwood     | palo_alto   | 2100000 |
+| roundhill   | horseneck   | 8000000 |
++-------------+-------------+---------+
+8 rows in set (0.00 sec)
+
+////insert data into account
+
+mysql> insert into account values('A-101','downtown',500);
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into account(account_no,branch_name,balance) values('A-102','perrybridge',400),('A-201','brighton',900),('A-215','mianus',700),('A-217','brighton',750),('A-222','redwood',700),('A-305','roundhill',350);
+Query OK, 6 rows affected (0.05 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+//display account table
+
+mysql> select * from account;
++------------+-------------+---------+
+| account_no | branch_name | balance |
++------------+-------------+---------+
+| A-101      | downtown    |     500 |
+| A-102      | perrybridge |     400 |
+| A-201      | brighton    |     900 |
+| A-215      | mianus      |     700 |
+| A-217      | brighton    |     750 |
+| A-222      | redwood     |     700 |
+| A-305      | roundhill   |     350 |
++------------+-------------+---------+
+7 rows in set (0.00 sec)
+
+////insert data into depositer
+
+mysql> insert into depositer values('hayes','A-102');
+Query OK, 1 row affected (0.06 sec)
+
+mysql> insert into depositer (cust_name,account_no) values('johnson','A-101'),('johnson','A-201'),('jones','A-217'),('lindsay','A-222'),('smith','A-215'),('turner','A-305');
+Query OK, 6 rows affected (0.11 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+//display depositer table
+
+mysql> select * from depositer;
++-----------+------------+
+| cust_name | account_no |
++-----------+------------+
+| hayes     | A-102      |
+| johnson   | A-101      |
+| johnson   | A-201      |
+| jones     | A-217      |
+| lindsay   | A-222      |
+| smith     | A-215      |
+| turner    | A-305      |
++-----------+------------+
+7 rows in set (0.00 sec)
+
+////insert data into loan
+
+mysql> insert into loan values('L-11','roundhill',900);
+Query OK, 1 row affected (0.31 sec)
+
+mysql> insert into loan (loan_no,branch_name,amount) values('L-14','downtown',1500),('L-15','perrybridge',1500),('l-16','perrybridge',1300),('L-17','downtown',1000),('L-23','redwood',2000),('L-93','mianus',500);
+Query OK, 6 rows affected (0.39 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+//display loan table
+
+mysql> select * from loan;
++---------+-------------+--------+
+| loan_no | branch_name | amount |
++---------+-------------+--------+
+| L-11    | roundhill   |    900 |
+| L-14    | downtown    |   1500 |
+| L-15    | perrybridge |   1500 |
+| l-16    | perrybridge |   1300 |
+| L-17    | downtown    |   1000 |
+| L-23    | redwood     |   2000 |
+| L-93    | mianus      |    500 |
++---------+-------------+--------+
+7 rows in set (0.00 sec)
+
+////insert data into borrower
+
+mysql> insert into borrower values('admas','L-16');
+Query OK, 1 row affected (0.31 sec)
+
+mysql> insert into borrower(cust_name,loan_no) values('curry','L-93'),('hayes','L-15'),('johnson','L-14'),('jones','L-17'),('smith','L-11'),('smith','L-23'),('williams','L-17');
+Query OK, 7 rows affected (2.44 sec)
+Records: 7  Duplicates: 0  Warnings: 0
+
+//display borrower table
+
+mysql> select * from borrower;
++-----------+---------+
+| cust_name | loan_no |
++-----------+---------+
+| admas     | L-16    |
+| curry     | L-93    |
+| hayes     | L-15    |
+| johnson   | L-14    |
+| jones     | L-17    |
+| smith     | L-11    |
+| smith     | L-23    |
+| williams  | L-17    |
++-----------+---------+
+8 rows in set (0.00 sec)
+
+//Find average balance of accounts at Perryridge branch
+
+mysql> SELECT AVG(balance) FROM account
+    -> WHERE branch_name = 'Perryridge';
++--------------+
+| AVG(balance) |
++--------------+
+|         NULL |
++--------------+
+1 row in set (0.02 sec)
+
+mysql> SELECT AVG(balance) FROM account WHERE branch_name = 'Perrybridge';
++--------------+
+| AVG(balance) |
++--------------+
+|     400.0000 |
++--------------+
+1 row in set (0.00 sec)
+
+//Find maximum amount of any loan in the bank
+mysql> SELECT MAX(amount) AS max_amt FROM loan;
++---------+
+| max_amt |
++---------+
+|    2000 |
++---------+
+1 row in set (0.00 sec)
+
+//Find minimum amount of any loan in the bank
+mysql> select MAX(amount),MIN(amount) from loan;
++-------------+-------------+
+| MAX(amount) | MIN(amount) |
++-------------+-------------+
+|        2000 |         500 |
++-------------+-------------+
+1 row in set (0.00 sec)
+
+//use inner join on depositer or borrower table
+
+mysql> select depositer.account_no,borrower.loan_no from depositer inner join borrower ON depositer.cust_name=borrower.cust_name;
++------------+---------+
+| account_no | loan_no |
++------------+---------+
+| A-102      | L-15    |
+| A-101      | L-14    |
+| A-201      | L-14    |
+| A-217      | L-17    |
+| A-215      | L-11    |
+| A-215      | L-23    |
++------------+---------+
+6 rows in set (0.05 sec)
+
+//use left join
+
+mysql> select * from depositer left join borrower ON depositer.cust_name=borrower.cust_name;
++-----------+-----------+-----------+---------+
+| cust_name | accountno | cust_name | loan_no |
++-----------+-----------+-----------+---------+
+| hayers    | A-102     | hayers    | L-15    |
+| johnson   | A-101     | johnson   | L-14    |
+| johnson   | A-201     | johnson   | L-14    |
+| jones     | A-217     | jones     | L-17    |
+| lindsay   | A-222     | NULL      | NULL    |
+| smith     | A-215     | smith     | L-11    |
+| smith     | A-215     | smith     | L-23    |
+| smith     | A-215     | smith     | L-23    |
+| tumer     | A-305     | NULL      | NULL    |
++-----------+-----------+-----------+---------+
+9 rows in set (0.00 sec)
+
+//use right join
+
+mysql> select depositer.account_no,borrower.loan_no from depositer right join borrower ON depositer.cust_name=borrower.cust_name;
++------------+---------+
+| account_no | loan_no |
++------------+---------+
+| NULL       | L-16    |
+| NULL       | L-93    |
+| A-102      | L-15    |
+| A-101      | L-14    |
+| A-201      | L-14    |
+| A-217      | L-17    |
+| A-215      | L-11    |
+| A-215      | L-23    |
+| NULL       | L-17    |
++------------+---------+
+9 rows in set (0.00 sec)
+
+//use full join
+
+mysql>  select *from depositer full join borrower;
++-----------+------------+-----------+---------+
+| cust_name | account_no | cust_name | loan_no |
++-----------+------------+-----------+---------+
+| hayes     | A-102      | admas     | L-16    |
+| johnson   | A-101      | admas     | L-16    |
+| johnson   | A-201      | admas     | L-16    |
+| jones     | A-217      | admas     | L-16    |
+| lindsay   | A-222      | admas     | L-16    |
+| smith     | A-215      | admas     | L-16    |
+| turner    | A-305      | admas     | L-16    |
+| hayes     | A-102      | curry     | L-93    |
+| johnson   | A-101      | curry     | L-93    |
+| johnson   | A-201      | curry     | L-93    |
+| jones     | A-217      | curry     | L-93    |
+| lindsay   | A-222      | curry     | L-93    |
+| smith     | A-215      | curry     | L-93    |
+| turner    | A-305      | curry     | L-93    |
+| hayes     | A-102      | hayes     | L-15    |
+| johnson   | A-101      | hayes     | L-15    |
+| johnson   | A-201      | hayes     | L-15    |
+| jones     | A-217      | hayes     | L-15    |
+| lindsay   | A-222      | hayes     | L-15    |
+| smith     | A-215      | hayes     | L-15    |
+| turner    | A-305      | hayes     | L-15    |
+| hayes     | A-102      | johnson   | L-14    |
+| johnson   | A-101      | johnson   | L-14    |
+| johnson   | A-201      | johnson   | L-14    |
+| jones     | A-217      | johnson   | L-14    |
+| lindsay   | A-222      | johnson   | L-14    |
+| smith     | A-215      | johnson   | L-14    |
+| turner    | A-305      | johnson   | L-14    |
+| hayes     | A-102      | jones     | L-17    |
+| johnson   | A-101      | jones     | L-17    |
+| johnson   | A-201      | jones     | L-17    |
+| jones     | A-217      | jones     | L-17    |
+| lindsay   | A-222      | jones     | L-17    |
+| smith     | A-215      | jones     | L-17    |
+| turner    | A-305      | jones     | L-17    |
+| hayes     | A-102      | smith     | L-11    |
+| johnson   | A-101      | smith     | L-11    |
+| johnson   | A-201      | smith     | L-11    |
+| jones     | A-217      | smith     | L-11    |
+| lindsay   | A-222      | smith     | L-11    |
+| smith     | A-215      | smith     | L-11    |
+| turner    | A-305      | smith     | L-11    |
+| hayes     | A-102      | smith     | L-23    |
+| johnson   | A-101      | smith     | L-23    |
+| johnson   | A-201      | smith     | L-23    |
+| jones     | A-217      | smith     | L-23    |
+| lindsay   | A-222      | smith     | L-23    |
+| smith     | A-215      | smith     | L-23    |
+| turner    | A-305      | smith     | L-23    |
+| hayes     | A-102      | williams  | L-17    |
+| johnson   | A-101      | williams  | L-17    |
+| johnson   | A-201      | williams  | L-17    |
+| jones     | A-217      | williams  | L-17    |
+| lindsay   | A-222      | williams  | L-17    |
+| smith     | A-215      | williams  | L-17    |
+| turner    | A-305      | williams  | L-17    |
++-----------+------------+-----------+---------+
+56 rows in set (0.03 sec)
+
+//select query using NOT IN sub-query
+mysql> select loan_no from loan where branch_name NOT IN ('perrybridge ','downtown');
++---------+
+| loan_no |
++---------+
+| L-93    |
+| L-23    |
+| L-11    |
++---------+
+3 rows in set (0.28 sec)
+
+//select query using in sub-query
+
+mysql> select cust_name,cust_city from customer where cust_name IN ('admas','jones');
++-----------+------------+
+| cust_name | cust_city  |
++-----------+------------+
+| admas     | pittsfield |
+| jones     | harrison   |
++-----------+------------+
+2 rows in set (0.00 sec)
+
+//update data
+
+mysql> update account set balance=balance * 2 where balance<=500;
+Query OK, 3 rows affected (0.34 sec)
+Rows matched: 3  Changed: 3  Warnings: 0
+
+mysql> select * from account;
++------------+-------------+---------+
+| account_no | branch_name | balance |
++------------+-------------+---------+
+| A-101      | downtown    |    1000 |
+| A-102      | perrybridge |     800 |
+| A-201      | brighton    |     900 |
+| A-215      | mianus      |     700 |
+| A-217      | brighton    |     750 |
+| A-222      | redwood     |     700 |
+| A-305      | roundhill   |     700 |
++------------+-------------+---------+
+7 rows in set (0.00 sec)
+
+mysql> select * from customer where cust_name='green';
++-----------+-------------+-----------+
+| cust_name | cust_street | cust_city |
++-----------+-------------+-----------+
+| green     | walnut      | stamford  |
++-----------+-------------+-----------+
+1 row in set (0.00 sec)
+
+//delete particular record
+
+mysql> delete from customer where cust_name='green';
+Query OK, 1 row affected (0.05 sec)
+
+mysql> select * from customer;
++-----------+-------------+------------+
+| cust_name | cust_street | cust_city  |
++-----------+-------------+------------+
+| admas     | spring      | pittsfield |
+| brooks    | senator     | brooklyn   |
+| curry     | north       | rye        |
+| glenn     | sandhill    | woodside   |
+| hayes     | main        | harrison   |
+| johnson   | amla        | palo_alto  |
+| jones     | main        | harrison   |
+| lindsay   | park        | pittsfield |
+| smith     | north       | rye        |
+| turner    | putnam      | stamford   |
+| williams  | nassau      | princeton  |
++-----------+-------------+------------+
+11 rows in set (0.00 sec)
+
+//create view having all record and fields from existing table
+
+mysql> create or replace view account_view1 as select * from account;
+Query OK, 0 rows affected (0.31 sec)
+
+mysql> select * from account_view1;
++------------+-------------+---------+
+| account_no | branch_name | balance |
++------------+-------------+---------+
+| A-101      | downtown    |    1000 |
+| A-102      | perrybridge |     800 |
+| A-201      | brighton    |     900 |
+| A-215      | mianus      |     700 |
+| A-217      | brighton    |     750 |
+| A-222      | redwood     |     700 |
+| A-305      | roundhill   |     700 |
++------------+-------------+---------+
+7 rows in set (0.00 sec)
+
+//create view having all specific fields but all record in existing table
+
+mysql> create or replace view account_view2 as select account_no,balance from account;
+Query OK, 0 rows affected (0.31 sec)
+
+mysql> select * from account_view2;
++------------+---------+
+| account_no | balance |
++------------+---------+
+| A-101      |    1000 |
+| A-102      |     800 |
+| A-201      |     900 |
+| A-215      |     700 |
+| A-217      |     750 |
+| A-222      |     700 |
+| A-305      |     700 |
++------------+---------+
+7 rows in set (0.01 sec)
+
+//create view with specific condition
+
+mysql> create or replace view account_view3 as select * from account where balance >800;
+Query OK, 0 rows affected (0.30 sec)
+
+mysql> select * from account_view3;
++------------+-------------+---------+
+| account_no | branch_name | balance |
++------------+-------------+---------+
+| A-101      | downtown    |    1000 |
+| A-201      | brighton    |     900 |
++------------+-------------+---------+
+2 rows in set (0.00 sec)
+
+mysql> update account_view1 set balance=650 where account_no='A-222';
+Query OK, 1 row affected (0.31 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from account_view1;
++------------+-------------+---------+
+| account_no | branch_name | balance |
++------------+-------------+---------+
+| A-101      | downtown    |    1000 |
+| A-102      | perrybridge |     800 |
+| A-201      | brighton    |     900 |
+| A-215      | mianus      |     700 |
+| A-217      | brighton    |     750 |
+| A-222      | redwood     |     650 |
+| A-305      | roundhill   |     700 |
++------------+-------------+---------+
+7 rows in set (0.00 sec)

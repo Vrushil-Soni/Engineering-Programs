@@ -1,0 +1,100 @@
+/*
+Title:--Cursors: (All types: Implicit, Explicit, Cursor FOR Loop, Parameterized Cursor)
+Write a PL/SQL block of code using parameterized Cursor, that will merge the data available
+in the newly created table N_RollCall with the data available in the table O_RollCall. If the
+data in the first table already exist in the second table then that data should be skipped.
+Frame the separate problem statement for writing PL/SQL block to implement all types
+of Cursors inline with above statement. The problem statement should clearly state the
+requirements.
+
+*/
+
+mysql> create database student;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> use student;
+Database changed
+mysql> create table stud_marks(roll_no int primary key,name varchar(100),total_marks int);
+Query OK, 0 rows affected (0.32 sec)
+
+mysql> insert into stud_marks values(1,'abc',800);
+Query OK, 1 row affected (
+Frame the separate problem statement for writing PL/SQL block to implement all types0.08 sec)
+
+mysql> insert into stud_marks values(2,'def',950);
+Query OK, 1 row affected (0.06 sec)
+
+mysql> insert into stud_marks values(3,'ghi',650);
+Query OK, 1 row affected (0.04 sec)
+
+mysql> select * from stud_marks;
++---------+-------+-------------+
+| roll_no | name  | total_marks |
++---------+-------+-------------+
+|       1 |  abc  |         800 |
+|       2 |  def  |         950 |
+|       3 |  ghi  |         650 |
++---------+-------+-------------+
+3 rows in set (0.00 sec)
+
+mysql> create table new_stud_marks(roll_no int, grade char(10));
+Query OK, 0 rows affected (0.33 sec)
+
+mysql> select * from new_stud_marks;
+Empty set (0.00 sec)
+
+mysql> delimiter $$
+mysql> create procedure set_cursor() begin declare rollno int; declare marks int; declare flag int; declare c1 cursor for select roll_no, total_marks from stud_marks; open c1; l1:loop fetch c1 into rollno, marks; set flag=0; select roll_no into flag from new_stud_marks where new_stud_marks.roll_no = rollno; if flag = 0 then if marks<=1500 and marks>=990 then insert into new_stud_marks values(rollno,'DIST'); end if; if marks<990 and marks>=900 then insert into new_stud_marks values(rollno,'FC'); end if; if marks<900 and marks>=825 then insert into new_stud_marks values(rollno,'HSC'); end if; if marks<825 and marks>=750 then insert into new_stud_marks values(rollno,'SC'); end if; if marks<750 and marks>=600 then insert into new_stud_marks values(rollno,'PC'); end if; if marks<600 then insert into new_stud_marks values(rollno,'FAIL'); end if; end if; end loop l1; close c1; end$$
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> select * from stud_marks $$
++---------+-------+-------------+
+| roll_no | name  | total_marks |
++---------+-------+-------------+
+|       1 |  abc  |         800 |
+|       2 |  def  |         950 |
+|       3 |  ghi  |         650 |
++---------+-------+-------------+
+3 rows in set (0.00 sec)
+
+mysql> call set_cursor()$$
+ERROR 1329 (02000): No data - zero rows fetched, selected, or processed
+mysql> select * from new_stud_marks $$
++---------+-------+
+| roll_no | grade |
++---------+-------+
+|       1 | SC    |
+|       2 | FC    |
+|       3 | PC    |
++---------+-------+
+3 rows in set (0.01 sec)
+
+mysql> insert into stud_marks values(4,'vrushil',1000);
+    -> $$
+Query OK, 1 row affected (0.05 sec)
+
+mysql> select * from stud_marks $$
++---------+---------+-------------+
+| roll_no | name    | total_marks |
++---------+---------+-------------+
+|       1 |   abc   |         800 |
+|       2 |   def   |         950 |
+|       3 |   ghi   |         650 |
+|       4 | vrushil |        1000 |
++---------+---------+-------------+
+4 rows in set (0.00 sec)
+
+mysql> call set_cursor()$$
+ERROR 1329 (02000): No data - zero rows fetched, selected, or processed
+mysql> select * from new_stud_marks $$
++---------+-------+
+| roll_no | grade |
++---------+-------+
+|       1 | SC    |
+|       2 | FC    |
+|       3 | PC    |
+|       4 | DIST  |
++---------+-------+
+4 rows in set (0.00 sec)
+
+

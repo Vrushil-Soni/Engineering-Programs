@@ -1,0 +1,307 @@
+/*
+TITLE:--Design at least 10 SQL queries for suitable database application using SQL DML statements:
+Insert, Select, Update, Delete with operators, funtion and set operator.
+*/
+
+//CREATE DATABASE EMP_INFO.
+
+mysql> create database EMP_INFO;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> use EMP_INFO;
+Database changed
+mysql> create table employe(emp_id primary key int,name varchar(50),designation varchar(50),salary int,DOJ date,city varchar(50));
+
+//CREATE TABLE OF EMPLOYEE CONTAINING EMP_ID,NAME,DESIGNATION,SALARY,DATE OF JOINING,CITY
+
+mysql> create table employe(emp_id int primary key,name varchar(50),designation varchar(50),salary int,DOJ date,city varchar(50));
+Query OK, 0 rows affected (0.26 sec)
+
+
+//INSERT THE DETAILS 
+
+mysql> insert into employe values(1001,'ABC','Manager',80000,'1985/02/25','Pune');
+Query OK, 1 row affected (0.32 sec)
+
+mysql> insert into employe values(1002,'DEF','Supervisor',60000,'2001/03/28','Nasik');
+Query OK, 1 row affected (0.08 sec)
+
+mysql> insert into employe values(1003,'GHI','Clerk',20000,'2000/04/1','Delhi');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into employe values(1004,'JKL','Security',10000,'1998/05/25','Ahemdabad');
+Query OK, 1 row affected (0.06 sec)
+
+mysql> insert into employe values(1005,'Pqr','Suprervisor',47000,'2012/05/19','Nagar');
+Query OK, 1 row affected (0.06 sec)
+
+//DISPLAY TABLE EMPLOYEE
+
+mysql> select * from employe;
++--------+--------+-------------+--------+------------+-----------+
+| emp_id | name   | designation | salary | DOJ        | city      |
++--------+--------+-------------+--------+------------+-----------+
+|   1001 | ABC  | Manager     |  80000 | 1985-02-25 | Pune      |
+|   1002 | DEF  | Supervisor  |  60000 | 2001-03-28 | Nasik     |
+|   1003 | GHI  | Clerk       |  20000 | 2000-04-01 | Delhi     |
+|   1004 | JKL | Security    |  10000 | 1998-05-25 | Ahemdabad |
+|   1005 | Pqr  | Suprervisor |  47000 | 2012-05-19 | Nagar     |
++--------+--------+-------------+--------+------------+-----------+
+5 rows in set (0.00 sec)
+
+//CREATE TABLE ACCOUNT INFO CONTAINING ACCOUNT NO,BANK NAME,BRANCH ,EMPLOYEE ID,ACCOUNT TYPE ,BALANCE
+mysql> create table ACC_INFO(Acc_no int,Bank_name varchar(50),Branch varchar(50),EMP_ID int,Acc_type varchar(50),Balance int);
+Query OK, 0 rows affected (0.51 sec)
+
+mysql> Alter table ACC_INFO add foreign key(EMP_ID) REferences employe(emp_id);
+Query OK, 0 rows affected (0.87 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+//insert data 
+
+mysql> insert into ACC_INFO values(82005,'SBI','Koregoan_Park',1001,'Saving',500000);
+Query OK, 1 row affected (0.30 sec)
+
+mysql> insert into ACC_INFO values(12547,'Bom','Swargate',1002,'Saving',550000);
+Query OK, 1 row affected (0.06 sec)
+
+mysql> insert into ACC_INFO values(17500,'IDBI','Koregoan_park',1003,'Current',600);
+Query OK, 1 row affected (0.07 sec)
+
+mysql> insert into ACC_INFO values(125478,'ICICI','Sinhgad_Road',1004,'Saving',5000);
+Query OK, 1 row affected (0.30 sec)
+
+mysql> insert into ACC_INFO values(36540,'HDFC','Sinhgad_Road',1005,'Saving',500);
+Query OK, 1 row affected (0.30 sec)
+
+
+//DISPLAY CONTAINS OF ACCOUNT INFO
+
+mysql> select * from ACC_INFO;
++--------+-----------+---------------+--------+----------+---------+
+| Acc_no | Bank_name | Branch        | EMP_ID | Acc_type | Balance |
++--------+-----------+---------------+--------+----------+---------+
+|  82005 | SBI       | Koregoan_Park |   1001 | Saving   |  500000 |
+|  12547 | Bom       | Swargate      |   1002 | Saving   |  550000 |
+|  17500 | IDBI      | Koregoan_park |   1003 | Current  |     600 |
+| 125478 | ICICI     | Sinhgad_Road  |   1004 | Saving   |    5000 |
+|  36540 | HDFC      | Sinhgad_Road  |   1005 | Saving   |     500 |
++--------+-----------+---------------+--------+----------+---------+
+5 rows in set (0.00 sec)
+
+
+
+//DISPLAY COUNT OF EMPLOYEES 
+
+mysql> select count(salary) from employe;
++---------------+
+| count(salary) |
++---------------+
+|             5 |
++---------------+
+1 row in set (0.00 sec)
+
+//FIND OUT AVERAGE OF SALARY OF EMPLOYEES
+
+mysql> select avg(salary) from employe;
++-------------+
+| avg(salary) |
++-------------+
+|  43400.0000 |
++-------------+
+1 row in set (0.00 sec)
+
+//DELETE NAME PARTICULAR EMPLOYEE.
+
+mysql> delete from employe where name='Amit';
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select * from employe;
++--------+--------+-------------+--------+------------+-----------+
+| emp_id | name   | designation | salary | DOJ        | city      |
++--------+--------+-------------+--------+------------+-----------+
+|   1001 |   ABC  | Manager     |  80000 | 1985-02-25 | Pune      |
+|   1002 |   DEF  | Supervisor  |  60000 | 2001-03-28 | Nasik     |
+|   1003 |   GHI  | Clerk       |  20000 | 2000-04-01 | Delhi     |
+|   1004 |   JKL  | Security    |  10000 | 1998-05-25 | Ahemdabad |
+|   1005 |   Pqr  | Suprervisor |  47000 | 2012-05-19 | Nagar     |
++--------+--------+-------------+--------+------------+-----------+
+5 rows in set (0.00 sec)
+
+// CHANGE DATATYPE OF SALARY FROM INTEGER TO FLOAT
+
+mysql> Alter table employe modify salary float;
+Query OK, 5 rows affected (0.76 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> select * from employe;
++--------+--------+-------------+--------+------------+-----------+
+| emp_id | name   | designation | salary | DOJ        | city      |
++--------+--------+-------------+--------+------------+-----------+
+|   1001 | ABC  | Manager     |  80000 | 1985-02-25 | Pune      |
+|   1002 | DEF  | Supervisor  |  60000 | 2001-03-28 | Nasik     |
+|   1003 | GHI  | Clerk       |  20000 | 2000-04-01 | Delhi     |
+|   1004 | JKL  | Security    |  10000 | 1998-05-25 | Ahemdabad |
+|   1005 | Pqr  | Suprervisor |  47000 | 2012-05-19 | Nagar     |
++--------+--------+-------------+--------+------------+-----------+
+5 rows in set (0.00 sec)
+
+mysql> Alter table employe modify salary integer;
+Query OK, 5 rows affected (0.93 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+//DISPLAY DISTINCT CITIES OF EMPLOYEE
+
+mysql> select distinct(city) from employe;
++-----------+
+| city      |
++-----------+
+| Pune      |
+| Nasik     |
+| Delhi     |
+| Ahemdabad |
+| Nagar     |
++-----------+
+5 rows in set (0.00 sec)
+
+//COUNT NUMBER OF EMPLOYEE HAVING DISTINCT CITY
+
+mysql> select city,count(salary) from employe group by city;
++-----------+---------------+
+| city      | count(salary) |
++-----------+---------------+
+| Ahemdabad |             1 |
+| Delhi     |             1 |
+| Nagar     |             1 |
+| Nasik     |             1 |
+| Pune      |             1 |
++-----------+---------------+
+5 rows in set (0.00 sec)
+
+//DISPLAY EMPLOYEES WHO DATE OF JOINING IS AFTER 2001/03/23  
+ 
+mysql> select * from employe where DOJ > '2001/03/23';
++--------+-------+-------------+--------+------------+-------+
+| emp_id | name  | designation | salary | DOJ        | city  |
++--------+-------+-------------+--------+------------+-------+
+|   1002 |   DEF | Supervisor  |  60000 | 2001-03-28 | Nasik |
+|   1005 |   Pqr | Suprervisor |  47000 | 2012-05-19 | Nagar |
++--------+-------+-------------+--------+------------+-------+
+2 rows in set (0.00 sec)
+
+// DISPLAY NAME OF EMPLOYEE BEGINNING WITH S
+
+mysql> select name,designation,salary from employe where name like "s%";
++-------+-------------+--------+
+| name  | designation | salary |
++-------+-------------+--------+
+|   GHI | Clerk       |  20000 |
++-------+-------------+--------+
+1 row in set (0.00 sec)
+
+//SELETE ALL EMPLOYE WITH A NAME THAT HAVE ti IN ANY POSITION.
+
+mysql> select * from employe where name like '%ti%';
++--------+--------+-------------+--------+------------+-----------+
+| emp_id | name   | designation | salary | DOJ        | city      |
++--------+--------+-------------+--------+------------+-----------+
+|   1004 |  JKL   | Security    |  10000 | 1998-05-25 | Ahemdabad |
+|   1005 |  Pqr   | Suprervisor |  47000 | 2012-05-19 | Nagar     |
++--------+--------+-------------+--------+------------+-----------+
+2 rows in set (0.01 sec)
+
+
+mysql> update employe set salary=15000 where name='GHI';
+Query OK, 1 row affected (0.09 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from employe;
++--------+--------+-------------+--------+------------+-----------+
+| emp_id | name   | designation | salary | DOJ        | city      |
++--------+--------+-------------+--------+------------+-----------+
+|   1001 | ABC  | Manager     |  80000 | 1985-02-25 | Pune      |
+|   1002 | DEF  | Supervisor  |  60000 | 2001-03-28 | Nasik     |
+|   1003 | GHI  | Clerk       |  15000 | 2000-04-01 | Delhi     |
+|   1004 | JKL | Security    |  10000 | 1998-05-25 | Ahemdabad |
+|   1005 | Pqr  | Suprervisor |  47000 | 2012-05-19 | Nagar     |
++--------+--------+-------------+--------+------------+-----------+
+5 rows in set (0.00 sec)
+
+//CALCULATE SUM OF EMPLOYE
+
+mysql> select sum(salary) from employe;
++-------------+
+| sum(salary) |
++-------------+
+|      212000 |
++-------------+
+1 row in set (0.00 sec)
+
+//CALCULATE AVG OF EMPLOYE WHICH ARE GREATER THAN 50000.
+
+mysql> select avg(salary) from employe where salary>50000;
++-------------+
+| avg(salary) |
++-------------+
+|  70000.0000 |
++-------------+
+1 row in set (0.00 sec)
+
+//FIND OUT MINIMUM SALARY OF EMPLOYE
+
+mysql> select min(salary) as min_salary from employe;
++------------+
+| min_salary |
++------------+
+|      10000 |
++------------+
+1 row in set (0.00 sec)
+
+//FIND OUT MAXIMUM SALARY OF EMPLOYE.
+
+mysql> select max(salary) as max_salary from employe;
++------------+
+| max_salary |
++------------+
+|      80000 |
++------------+
+1 row in set (0.00 sec)
+
+//FIND OF EMPLOYE WHOSE NAME ARE NOT START WITH 'P'.
+
+mysql> select * from employe where name NOT LIKE 'P%';
++--------+-------+-------------+--------+------------+-------+
+| emp_id | name  | designation | salary | DOJ        | city  |
++--------+-------+-------------+--------+------------+-------+
+|   1001 | ABC | Manager     |  80000 | 1985-02-25 | Pune  |
+|   1003 | GHI | Clerk       |  15000 | 2000-04-01 | Delhi |
++--------+-------+-------------+--------+------------+-------+
+2 rows in set (0.00 sec)
+
+//arrange salary in ascending order.
+
+mysql> select salary  from employe order by salary;
++--------+
+| salary |
++--------+
+|  10000 |
+|  15000 |
+|  47000 |
+|  60000 |
+|  80000 |
++--------+
+5 rows in set (0.00 sec)
+
+//FIND THE NAME OF EMPLOYE WHO'S SALARY BETWEEN 47000 AND 80000.
+mysql> select salary,name from employe where salary between 47000 and 80000;
++--------+-------+
+| salary | name  |
++--------+-------+
+|  80000 | ABC |
+|  60000 | DEF |
+|  47000 | Pqr |
++--------+-------+
+3 rows in set (0.00 sec)
+
+
+

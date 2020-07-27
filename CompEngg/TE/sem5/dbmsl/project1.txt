@@ -1,0 +1,133 @@
+/*vrushil@vrushil:~$ sudo mysql -u root -p
+[sudo] password for vrushil: 
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 6
+Server version: 5.7.22-0ubuntu0.16.04.1 (Ubuntu)
+
+Copyright (c) 2000, 2018, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> CREATE DATABASE EXPDB;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> use EXPDB;
+Database changed
+mysql>  CREATE TABLE EXPTABLE ( ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,NAME VARCHAR (50));
+Query OK, 0 rows affected (0.09 sec)
+
+mysql> INSERT INTO EXPTABLE (NAME) VALUES ("ABC");
+Query OK, 1 row affected (0.04 sec)
+
+mysql> INSERT INTO EXPTABLE (NAME) VALUES ("PQR");
+Query OK, 1 row affected (0.02 sec)
+
+mysql> select * from EXPDB;
+ERROR 1146 (42S02): Table 'EXPDB.EXPDB' doesn't exist
+mysql> select * from EXPTABLE;
++----+------+
+| ID | NAME |
++----+------+
+|  1 | ABC  |
+|  2 | PQR  |
++----+------+
+2 rows in set (0.00 sec)
+
+*/
+/* JDBC_Connection_Demo.java */
+ 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+ 
+public class project1
+{
+  /* static block is executed when a class is loaded into memory 
+   * this block loads MySQL's JDBC driver
+   */
+  static
+  {
+    try
+    {
+      // loads com.mysql.jdbc.Driver into memory
+      Class.forName("com.mysql.jdbc.Driver");
+    } 
+    catch (ClassNotFoundException cnf) 
+    {
+      System.out.println("Driver could not be loaded: " + cnf);
+    }
+  }
+ 
+  public static void main(String[] args)
+  {
+    String connectionUrl = "jdbc:mysql://localhost:3306/EXPDB";
+    String dbUser = "vrushil";
+    String dbPwd = "vrushil@123";
+    Connection conn;
+    ResultSet rs;
+	//for showing all from db
+    String queryShowAll = "SELECT * FROM EXPTABLE";
+    try
+    {
+      conn = DriverManager.getConnection(connectionUrl, dbUser, dbPwd);
+      Statement stmt = conn.createStatement();
+ 
+      // INSERT A RECORD
+      stmt.executeUpdate("INSERT INTO EXPTABLE (NAME) VALUES (\"Vrushil\")");
+ 
+      // SELECT ALL RECORDS FROM EXPTABLE
+      rs = stmt.executeQuery(queryString);
+ 
+      System.out.println("ID \tNAME");
+      System.out.println("============");
+      while(rs.next())
+      {
+        System.out.println(rs.getInt("id") + ".\t" + rs.getString("name"));
+        System.out.println();
+      }
+      if (conn != null)
+      {
+        conn.close();
+        conn = null;
+      }
+    }
+    catch (SQLException sqle) 
+    {
+      System.out.println("SQL Exception thrown: " + sqle);
+    }
+  }
+} //JDBC_Connection ends here
+ 
+
+//output
+/*
+ID 	NAME
+============
+1.ABC
+2.PQR
+3.Vrushil
+
+
+
+//at mysql
+
+mysql> select * from EXPTABLE;
++----+----------+
+| ID | NAME 	|
++----+----------+
+|  1 | ABC  	|
+|  2 | PQR  	|
+|  3 | Vrushil  |
++----+----------+
+3 rows in set (0.00 sec)
+
+*/
+
+

@@ -1,0 +1,233 @@
+/*
+Title:-Design and Develop SQL DDL statements which demonstrate the use of SQL objects such as
+Table, View, Index, Sequence, Synonym
+*/
+
+//create database view
+
+mysql> create database view;
+Query OK, 0 rows affected (0.60 sec)
+
+mysql> use view;
+Database changed
+
+//create table employee
+
+mysql> create table employee(emp_no integer,emp_name varchar(20),salary integer);
+Query OK, 0 rows affected (0.58 sec)
+
+mysql> describe employee;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| emp_no   | int(11)     | YES  |     | NULL    |       |
+| emp_name | varchar(20) | YES  |     | NULL    |       |
+| salary   | int(11)     | YES  |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+//add column department in employee
+
+mysql> alter table employee add department varchar(20);
+Query OK, 0 rows affected (0.82 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> describe employee;
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| emp_no     | int(11)     | YES  |     | NULL    |       |
+| emp_name   | varchar(20) | YES  |     | NULL    |       |
+| salary     | int(11)     | YES  |     | NULL    |       |
+| department | varchar(20) | YES  |     | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+////drop column department in employee
+
+mysql> alter table employee drop column department;
+Query OK, 0 rows affected (0.92 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> describe employee;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| emp_no   | int(11)     | YES  |     | NULL    |       |
+| emp_name | varchar(20) | YES  |     | NULL    |       |
+| salary   | int(11)     | YES  |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+
+//modify column emp_no(integer to varchar)
+
+mysql> alter table employee modify column emp_no varchar(10);
+Query OK, 0 rows affected (0.79 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> describe employee;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| emp_no   | varchar(10) | YES  |     | NULL    |       |
+| emp_name | varchar(20) | YES  |     | NULL    |       |
+| salary   | int(11)     | YES  |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+//change the name of table
+
+mysql> rename table employee to emp;
+Query OK, 0 rows affected (0.15 sec)
+
+mysql> describe emp;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| emp_no   | varchar(10) | YES  |     | NULL    |       |
+| emp_name | varchar(20) | YES  |     | NULL    |       |
+| salary   | int(11)     | YES  |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+//insert data
+
+mysql> insert into emp values('E-101','ABC',30000);
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into emp values('E-131','DEF',45000);
+Query OK, 1 row affected (0.32 sec)
+
+mysql> insert into emp values('E-145','GHI',25000);
+Query OK, 1 row affected (0.04 sec)
+
+mysql> select * from emp;
++--------+----------+--------+
+| emp_no | emp_name | salary |
++--------+----------+--------+
+| E-101  |    ABC   |  30000 |
+| E-131  |    DEF   |  45000 |
+| E-145  |    GHI   |  25000 |
++--------+----------+--------+
+3 rows in set (0.00 sec)
+
+//create view having all record and fields from existing table
+
+mysql> create or replace view emp_view1 as select * from emp;
+Query OK, 0 rows affected (0.31 sec)
+
+mysql> select * from emp_view1;
++--------+----------+--------+
+| emp_no | emp_name | salary |
++--------+----------+--------+
+| E-101  |    ABC   |  30000 |
+| E-131  |    DEF   |  45000 |
+| E-145  |    GHI   |  25000 |
++--------+----------+--------+
+3 rows in set (0.00 sec)
+
+//create view having all specific fields but all record in existing table
+
+mysql> create or replace view emp_view2 as select emp_no,salary from emp;
+Query OK, 0 rows affected (0.31 sec)
+
+mysql> select * from emp_view2;
++--------+--------+
+| emp_no | salary |
++--------+--------+
+| E-101  |  30000 |
+| E-131  |  45000 |
+| E-145  |  25000 |
++--------+--------+
+3 rows in set (0.00 sec)
+
+//create view with specific condition
+
+mysql> create or replace view emp_view2 as select * from emp where salary<45000;
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> select * from emp_view2;
++--------+----------+--------+
+| emp_no | emp_name | salary |
++--------+----------+--------+
+| E-101  | ABC   |  30000 |
+| E-145  | GHI    |  25000 |
++--------+----------+--------+
+2 rows in set (0.00 sec)
+
+mysql> update emp_view1 set salary=35000 where emp_no='E-145';
+Query OK, 1 row affected (0.05 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from emp_view1;
++--------+----------+--------+
+| emp_no | emp_name | salary |
++--------+----------+--------+
+| E-101  | ABC   |  30000 |
+| E-131  | DEF   |  45000 |
+| E-145  | GHI    |  35000 |
++--------+----------+--------+
+3 rows in set (0.00 sec)
+
+//drop view
+
+mysql> drop view emp_view2;
+Query OK, 0 rows affected (0.00 sec)
+
+//create single column index
+
+mysql> create index ind1 on emp(emp_name);
+Query OK, 0 rows affected (0.63 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+//create composite index
+
+mysql> create index ind2 on emp(emp_name,emp_no);
+Query OK, 0 rows affected (0.65 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+//create unique index
+
+mysql> create unique index ind3 on emp(emp_name);
+Query OK, 0 rows affected (0.38 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> show index from emp;
++-------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| Table | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment |
++-------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| emp   |          0 | ind3     |            1 | emp_name    | A         |           3 |     NULL | NULL   | YES  | BTREE      |         |               |
+| emp   |          1 | ind1     |            1 | emp_name    | A         |           3 |     NULL | NULL   | YES  | BTREE      |         |               |
+| emp   |          1 | ind2     |            1 | emp_name    | A         |           3 |     NULL | NULL   | YES  | BTREE      |         |               |
+| emp   |          1 | ind2     |            2 | emp_no      | A         |           3 |     NULL | NULL   | YES  | BTREE      |         |               |
++-------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+4 rows in set (0.00 sec)
+
+//drop ind2
+
+mysql> drop index ind2 on emp;
+Query OK, 0 rows affected (0.22 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+//create squance
+
+mysql> create table emp_info(emp_no integer auto_increment,emp_name varchar(20),sal integer,primary key(emp_no));
+Query OK, 0 rows affected (0.32 sec)
+
+//insert data
+
+mysql> insert into emp_info values(1,'lmn',500);
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into emp_info values(2,'pqr',800);
+Query OK, 1 row affected (0.05 sec)
+
+mysql> select * from emp_info;
++--------+----------+------+
+| emp_no | emp_name | sal  |
++--------+----------+------+
+|      1 |   lmn    |  500 |
+|      2 |   pqr    |  800 |
++--------+----------+------+
+2 rows in set (0.00 sec)
+

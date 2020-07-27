@@ -1,0 +1,17 @@
+
+Mini Porject Title:- "Employee Identification for Health Insurance"
+
+Detail :- Prediction is done on the Health Dataset to identify whom we
+          can give health insurance and not, on the basis on their cholesterol,
+	  because cholesterol causes heart disease.
+
+Files :-
+
+	1) Output images Folder.
+	2) RapidMiner API File(DA.rmp)
+	3) XML File of RapidMiner Code.
+	4) Output.csv (Output File)
+	5) Health Dataset(.csv file).
+	6) DA Report.
+
+

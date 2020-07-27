@@ -1,0 +1,136 @@
+/*
+Title:--Database Trigger (All Types: Row level and Statement level triggers, Before and After
+Triggers). Write a database trigger on Library table. The System should keep track of the
+records that are being updated or deleted. The old value of updated or deleted records should
+be added in Library_Audit table.
+Frame the problem statement for writing Database Triggers of all types, in-line with
+above statement. The problem statement should clearly state the requirements..
+*/           			
+
+
+mysql> create database lib;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> use lib;
+Database changed
+
+/*create table librry */
+mysql> create table library(accession integer primary key, title varchar(60),author varchar(80),publisher varchar(50));
+Query OK, 0 rows affected (0.08 sec)
+
+/*create table library_audit*/
+mysql> create table library_audit(accession integer, title varchar(60),author varchar(80),publisher varchar(50),operation varchar(50),constraint ad foreign key(accession)references library(accession));
+Query OK, 0 rows affected (0.08 sec)
+
+mysql> describe library;
++-----------+-------------+------+-----+---------+-------+
+| Field     | Type        | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| accession | int(11)     | NO   | PRI | NULL    |       |
+| title     | varchar(60) | YES  |     | NULL    |       |
+| author    | varchar(80) | YES  |     | NULL    |       |
+| publisher | varchar(50) | YES  |     | NULL    |       |
++-----------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> describe library_audit;
++-----------+-------------+------+-----+---------+-------+
+| Field     | Type        | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| accession | int(11)     | YES  | MUL | NULL    |       |
+| title     | varchar(60) | YES  |     | NULL    |       |
+| author    | varchar(80) | YES  |     | NULL    |       |
+| publisher | varchar(50) | YES  |     | NULL    |       |
+| operation | varchar(50) | YES  |     | NULL    |       |
++-----------+-------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+/*insert data into library*/
+
+mysql> insert into library values(1,'Let us C','kanitakar','Tata');
+Query OK, 1 row affected (0.04 sec)
+
+mysql> insert into library values(2,'C programming','balagi','technical');
+Query OK, 1 row affected (0.04 sec)
+
+mysql> insert into library values(3,'Database Management System','Korth','tecmax');
+Query OK, 1 row affected (0.04 sec)
+
+/*create trigger for update_lib */
+mysql> create trigger update_lib after update on library for each row insert into library_audit(accession,title,author,publisher,operation)values(old.accession,old.title,old.author,old.publisher,'update');
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> select * from library_audit;
+Empty set (0.00 sec)
+
+/*display data in library*/
+mysql> select * from library;
++-----------+----------------------------+-----------+-----------+
+| accession | title                      | author    | publisher |
++-----------+----------------------------+-----------+-----------+
+|         1 | Let us C                   | kanitakar | Tata      |
+|         2 | C programming              | balagi    | technical |
+|         3 | Database Management System | Korth     | tecmax    |
++-----------+----------------------------+-----------+-----------+
+3 rows in set (0.00 sec)
+
+
+mysql> update library set publisher='tata' where accession=2;
+Query OK, 1 row affected (0.04 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from library_audit;
++-----------+---------------+--------+-----------+-----------+
+| accession | title         | author | publisher | operation |
++-----------+---------------+--------+-----------+-----------+
+|         2 | C programming | balagi | technical | update    |
++-----------+---------------+--------+-----------+-----------+
+1 row in set (0.00 sec)
+
+/*create trigger for delete_lib */
+mysql> create trigger delete_lib after delete on library for each row insert into library_audit(accession,title,author,publisher,operation)values(old.accession,old.title,old.author,old.publisher,'delete');
+Query OK, 0 rows affected (0.06 sec)
+
+
+mysql> SET foreign_key_checks=0;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select * from library_audit;
++-----------+---------------+--------+-----------+-----------+
+| accession | title         | author | publisher | operation |
++-----------+---------------+--------+-----------+-----------+
+|         2 | C programming | balagi | technical | update    |
++-----------+---------------+--------+-----------+-----------+
+1 row in set (0.00 sec)
+
+mysql> delete from library where accession=1;Query OK, 1 row affected (0.04 sec)
+
+mysql> select * from library_audit;
++-----------+---------------+-----------+-----------+-----------+
+| accession | title         | author    | publisher | operation |
++-----------+---------------+-----------+-----------+-----------+
+|         2 | C programming | balagi    | technical | update    |
+|         1 | Let us C      | kanitakar | Tata      | delete    |
++-----------+---------------+-----------+-----------+-----------+
+2 rows in set (0.00 sec)
+
+/*create trigger for insert_lib */
+
+mysql> create trigger insert_lib after insert on library for each row insert into library_audit(accession,title,author,publisher,operation)values(new.accession,new.title,new.author,new.publisher,'insert');
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> insert into library values(4,'M3','shinde','technical');
+Query OK, 1 row affected (0.03 sec)
+
+//display library_audit
+mysql> select * from library_audit;
++-----------+---------------+-----------+-----------+-----------+
+| accession | title         | author    | publisher | operation |
++-----------+---------------+-----------+-----------+-----------+
+|         2 | C programming | balagi    | technical | update    |
+|         1 | Let us C      | kanitakar | Tata      | delete    |
+|         4 | M3            | shinde    | technical | insert    |
++-----------+---------------+-----------+-----------+-----------+
+3 rows in set (0.00 sec)
+
+

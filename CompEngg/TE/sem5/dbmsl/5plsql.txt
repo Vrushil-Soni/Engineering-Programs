@@ -1,0 +1,142 @@
+/*
+Title:--Unnamed PL/SQL code block: Use of Control structure and Exception handling is mandatory.
+Write a PL/SQL block of code for the following requirements:-
+Schema:
+	1. Borrower(Rollin, Name, DateofIssue, NameofBook, Status)
+	2. Fine(Roll_no,Date,Amt)
+#Accept roll_no & name of book from user.
+#Check the number of days (from date of issue), if days are between 15 to 30 then fine
+amount will be Rs 5per day.
+#If no. of days>30, per day fine will be Rs 50 per day & for days less than 30, Rs. 5 per
+day.
+#After submitting the book, status will change from I to R.
+#If condition of fine is true, then details will be stored into fine table.
+Frame the problem statement for writing PL/SQL block inline with above statement.
+*/
+
+mysql> create database a5;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> use a5;
+Database changed
+
+//create table borrower.
+
+mysql> create table borrower(rollno integer primary key,name varchar(20),dateOfIssue date,NameOfBook varchar(30),status varchar(20));
+Query OK, 0 rows affected (0.09 sec)
+
+//create table fine
+
+mysql> create table fine(rollno integer,Date date,amount integer,constraint xyz foreign key(rollno) references borrower(rollno));
+Query OK, 0 rows affected (0.08 sec)
+
+mysql> describe borrower;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| rollno      | int(11)     | NO   | PRI | NULL    |       |
+| name        | varchar(20) | YES  |     | NULL    |       |
+| dateOfIssue | date        | YES  |     | NULL    |       |
+| NameOfBook  | varchar(30) | YES  |     | NULL    |       |
+| status      | varchar(20) | YES  |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> describe fine;
++--------+---------+------+-----+---------+-------+
+| Field  | Type    | Null | Key | Default | Extra |
++--------+---------+------+-----+---------+-------+
+| rollno | int(11) | YES  | MUL | NULL    |       |
+| Date   | date    | YES  |     | NULL    |       |
+| amount | int(11) | YES  |     | NULL    |       |
++--------+---------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+//insert data into borrower
+
+mysql> insert  into borrower values(1,'abc','2017/07/21','DBMS concept','issue');
+Query OK, 1 row affected (0.04 sec)
+
+mysql> insert  into borrower values(2,'def','2017/08/12','Let us c','issue');
+Query OK, 1 row affected (0.03 sec)
+
+mysql>  insert  into borrower values(3,'ghi','2017/08/20','maths','issue');
+Query OK, 1 row affected (0.05 sec)
+
+//display data in borrower
+mysql> select * from borrower;
++--------+-------+-------------+--------------+--------+
+| rollno | name  | dateOfIssue | NameOfBook   | status |
++--------+-------+-------------+--------------+--------+
+|      1 |  abc  | 2017-07-21  | DBMS concept | issue  |
+|      2 |  def  | 2017-08-12  | Let us c     | issue  |
+|      3 |  ghi  | 2017-08-20  | maths        | issue  |
++--------+-------+-------------+--------------+--------+
+3 rows in set (0.00 sec)
+
+//create procedure
+
+mysql> create procedure p8(IN r_no int,IN bname varchar(20))  
+begin 
+declare idate date;
+declare diff int;
+declare famt int;
+DECLARE EXIT HANDLER FOR SQLEXCEPTION,SQLWARNING select'sorry! no such rollno/book is present in database....'; 
+select dateOfIssue into idate from borrower where rollno=r_no and NameOfBook=bname; 
+select DATEDIFF(CURDATE(),idate) into diff; 
+if(diff>15) and (diff<=30) 
+then set famt=diff*5; 
+insert into fine values(r_no,CURDATE(),famt);  
+update borrower set status='return' 
+where rollno=r_no and NameOfBook=bname;  
+
+elseif(diff>30) then 
+set famt=diff*50; 
+insert into fine values(r_no,CURDATE(),famt);  
+update borrower set status='return' where rollno=r_no and NameOfBook=bname; 
+end if;
+end //
+Query OK, 0 rows affected (0.00 sec)
+
+//call procedure
+mysql> call p8(6,'mln')//
++------------------------------------------------------+
+| sorry! no such rollno/book is present in database... |
++------------------------------------------------------+
+| sorry! no such rollno/book is present in database... |
++------------------------------------------------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> call p8(3,'maths')//
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from fine//
+Empty set (0.00 sec)
+
+mysql> call p8(1,'DBMS concept')//
+Query OK, 1 row affected (0.07 sec)
+
+/*display fine table*/
+
+mysql> select * from fine//
++--------+------------+--------+
+| rollno | Date       | amount |
++--------+------------+--------+
+|      1 | 2017-09-04 |   2250 |
++--------+------------+--------+
+1 row in set (0.00 sec)
+
+/*display borrower table*/
+
+mysql> select * from borrower//
++--------+-------+-------------+--------------+--------+
+| rollno | name  | dateOfIssue | NameOfBook   | status |
++--------+-------+-------------+--------------+--------+
+|      1 |  abc  | 2017-07-21  | DBMS concept | return |
+|      2 |  def  | 2017-08-12  | Let us c     | issue  |
+|      3 |  ghi  | 2017-08-20  | maths        | issue  |
++--------+-------+-------------+--------------+--------+
+3 rows in set (0.00 sec)
+
